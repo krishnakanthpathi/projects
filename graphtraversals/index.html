@@ -2,12 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Bootstrap Template</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    
+    <div class="container mt-5">
+        <h1 class="text-center">Graph Traversal Visualization</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>DFS</h3>
+                <canvas id="dfsCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+            </div>
+            <div class="col-md-6">
+                <h3>BFS</h3>
+                <canvas id="bfsCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+            </div>
+        </div>
+    </div>
 
-    
+    <script>
+        // Example graph represented as a grid
+        const rows = 40;
+        const cols = 40;
+        const graph = {};
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                const node = i * cols + j;
+                graph[node] = [];
+                if (i > 0) graph[node].push((i - 1) * cols + j); // up
+                if (i < rows - 1) graph[node].push((i + 1) * cols + j); // down
+                if (j > 0) graph[node].push(i * cols + (j - 1)); // left
+                if (j < cols - 1) graph[node].push(i * cols + (j + 1)); // right
+            }
+        }
+
+        function drawGraph(canvasId, traversalOrder) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cellSize = canvas.width / cols;
+
+            // Draw grid
+            ctx.strokeStyle = '#000';
+            for (let i = 0; i <= rows; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+            for (let j = 0; j <= cols; j++) {
+                ctx.beginPath();
+                ctx.moveTo(j * cellSize, 0);
+                ctx.lineTo(j * cellSize, canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw nodes
+            traversalOrder.forEach((node, index) => {
+                setTimeout(() => {
+                    const x = (node % cols) * cellSize;
+                    const y = Math.floor(node / cols) * cellSize;
+                    const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+                    ctx.fillStyle = randomColor;
+                    ctx.fillRect(x, y, cellSize, cellSize);
+                }, index * 10);
+            });
+        }
+
+        function dfs(graph, start) {
+            const stack = [start];
+            const visited = new Set();
+            const order = [];
+
+            while (stack.length > 0) {
+                const node = stack.pop();
+                if (!visited.has(node)) {
+                    visited.add(node);
+                    order.push(node);
+                    graph[node].forEach(neighbor => {
+                        if (!visited.has(neighbor)) {
+                            stack.push(neighbor);
+                        }
+                    });
+                }
+            }
+            return order;
+        }
+
+        function bfs(graph, start) {
+            const queue = [start];
+            const visited = new Set();
+            const order = [];
+
+            while (queue.length > 0) {
+                const node = queue.shift();
+                if (!visited.has(node)) {
+                    visited.add(node);
+                    order.push(node);
+                    graph[node].forEach(neighbor => {
+                        if (!visited.has(neighbor)) {
+                            queue.push(neighbor);
+                        }
+                    });
+                }
+            }
+            return order;
+        }
+
+
+        const startNode = Math.floor(Math.random() * rows * cols);
+        const dfsOrder = dfs(graph, startNode);
+        const bfsOrder = bfs(graph, startNode);
+
+        drawGraph('dfsCanvas', dfsOrder);
+        drawGraph('bfsCanvas', bfsOrder);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
