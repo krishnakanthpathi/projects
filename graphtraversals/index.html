@@ -5,17 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Bootstrap Template</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- font awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
-    <div class="container bg-primary text-white p-3">
-        
+    <div class="container" >
+        <h1 class="text-center p-3"> Graph Traversal Visualization 
+            <i class="fas text-success fa-project-diagram"></i> 
+        </h1>
+        <div class="d-flex justify-content-around align-items-center">
+            <div class="p-1">
+                <h3>DFS</h3>
+                <canvas id="dfsCanvas" width="500" height="400" style="border:3px solid #000000;"></canvas>
+            </div>
+            <div class="p-1">
+                <h3>BFS</h3>
+                <canvas id="bfsCanvas" width="500" height="400" style="border:3px solid #000000;"></canvas>
+            </div>
+        </div>
 
 
     </div>
-
-
-
+    <script>
+        const canvas = document.getElementById('dfsCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = "blue";
+        ctx.fillRect(50, 50, 150, 100); // x, y, width, height
+    </script>
+<!-- 
     <div class="container mt-5">
         <h1 class="text-center">Graph Traversal Visualization</h1>
         <div class="row">
@@ -127,7 +145,7 @@
 
         drawGraph('dfsCanvas', dfsOrder);
         drawGraph('bfsCanvas', bfsOrder);
-    </script>
+    </script> -->
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
