@@ -1,36 +1,126 @@
 
-const canvas = document.getElementById('dfsCanvas');
-const ctx = canvas.getContext('2d');
 
-const width = canvas.width;
-const height = canvas.height;
+// drawing canvas
+function generateGraph( ) {
+    const graph = {} ; // graph
 
-const gridSize = 100;
+    // Clear canvas
+    const rowsInput = document.getElementById('rows').value;
+    const colsInput = document.getElementById('cols').value;
+    const algorithm = document.getElementById('algorithm').value;
 
-// Calculate the number of vertical and horizontal lines based on canvas dimensions
-const numVerticalLines = Math.ceil(width / gridSize);
-const numHorizontalLines = Math.ceil(height / gridSize);
- 
-// Draw vertical lines
-for (let x = 0; x <= width; x += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    const dfsDiv = document.getElementsByClassName("dfsCanvas")[0]; 
+    const bfsDiv = document.getElementsByClassName("bfsCanvas")[0]; 
+    const canvas = document.getElementById(algorithm);
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (algorithm == "dfsCanvas") {
+        dfsDiv.classList.remove("d-none")
+        bfsDiv.classList.add("d-none")
+    }else{
+        dfsDiv.classList.add("d-none")
+        bfsDiv.classList.remove("d-none")        
+    }
+
+    const rows = parseInt(rowsInput, 10) || 3; // Default to 3 if input is invalid
+    const cols = parseInt(colsInput, 10) || 3; // Default to 3 if input is invalid
+
+    const gridSizeX = width / cols;
+    const gridSizeY = height / rows;
+
+    for (let i = 0; i < rows; i++) {
+        for(let j = 0 ; j < cols ; j++){
+            let node = i*cols + j ;
+            graph[node] = [] ;
+            if (i > 0) graph[node].push((i - 1) * cols + j); // up
+            if (i < rows - 1) graph[node].push((i + 1) * cols + j); // down
+            if (j > 0) graph[node].push(i * cols + (j - 1)); // left
+            if (j < cols - 1) graph[node].push(i * cols + (j + 1)); // right
+        }
+    }
+    // Draw vertical lines
+    for (let x = 0; x <= width; x += gridSizeX) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+
+    // Draw horizontal lines
+    for (let y = 0; y <= height; y += gridSizeY) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+
+    const bfstraversal = bfs(graph , 0);
+    const dfstraversal = dfs(graph , 0);
+    const traversal = algorithm == "dfsCanvas" ? dfstraversal : bfstraversal ;
+    console.log(traversal)
+    traversal.forEach((element , idx) => {
+        setTimeout(() => {
+            const r = Math.floor(element / cols);
+            const c = element % cols;
+            console.log(r , c )
+            ctx.moveTo(r , c);
+            ctx.fillRect( r * gridSizeX , c * gridSizeY   , gridSizeX , gridSizeY);
+        } , 100*idx);
+
+    });
+
+
 }
 
-// Draw horizontal lines
-for (let y = 0; y <= height; y += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+
+
+function dfs(graph , start) {
+    const stack = [start];
+    const visited = new Set();
+    const order = [];
+
+    while (stack.length > 0) {
+        const node = stack.pop();
+        if (!visited.has(node)) {
+            visited.add(node);
+            order.push(node);
+            graph[node].forEach(neighbor => {
+                if (!visited.has(neighbor)) {
+                    stack.push(neighbor);
+                }
+            });
+        }
+    }
+    return order;
 }
 
+function bfs(graph , start) {
+    const queue = [start];
+    const visited = new Set();
+    const order = [];
+
+    while (queue.length > 0) {
+        const node = queue.shift();
+        if (!visited.has(node)) {
+            visited.add(node);
+            order.push(node);
+            graph[node].forEach(neighbor => {
+                if (!visited.has(neighbor)) {
+                    queue.push(neighbor);
+                }
+            });
+        }
+    }
+    return order;
+}
 // draw a lines 
 // ctx.beginPath(); // Start new path
 // ctx.moveTo(0, 100); // Move to starting point
