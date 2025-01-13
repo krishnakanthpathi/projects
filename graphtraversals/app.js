@@ -26,8 +26,8 @@ function generateGraph( ) {
         bfsDiv.classList.remove("d-none")        
     }
 
-    const rows = parseInt(rowsInput, 10) || 3; // Default to 3 if input is invalid
-    const cols = parseInt(colsInput, 10) || 3; // Default to 3 if input is invalid
+    const rows = parseInt(rowsInput, 10) || 6; // Default to 3 if input is invalid
+    const cols = parseInt(colsInput, 10) || 6; // Default to 3 if input is invalid
 
     const gridSizeX = width / cols;
     const gridSizeY = height / rows;
@@ -65,16 +65,15 @@ function generateGraph( ) {
     const bfstraversal = bfs(graph , 0);
     const dfstraversal = dfs(graph , 0);
     const traversal = algorithm == "dfsCanvas" ? dfstraversal : bfstraversal ;
-    console.log(traversal)
+
     traversal.forEach((element , idx) => {
         setTimeout(() => {
-            const r = Math.floor(element / cols);
-            const c = element % cols;
-            console.log(r , c )
-            ctx.moveTo(r , c);
-            ctx.fillRect( r * gridSizeX , c * gridSizeY   , gridSizeX , gridSizeY);
+                const r = Math.floor(element / cols);
+                const c = element % cols;
+                console.log(r , c )
+                ctx.moveTo(r , c);
+                ctx.fillRect( r * gridSizeX , c * gridSizeY   , gridSizeX , gridSizeY);
         } , 100*idx);
-
     });
 
 
@@ -121,6 +120,10 @@ function bfs(graph , start) {
     }
     return order;
 }
+
+
+
+
 // draw a lines 
 // ctx.beginPath(); // Start new path
 // ctx.moveTo(0, 100); // Move to starting point
